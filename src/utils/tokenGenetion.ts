@@ -4,7 +4,7 @@ import { IUser } from "../models/userModel";
 
 dotenv.config();
 
-const jwtSecret = process.env.JWT_SECRET
+const jwtSecret = process.env.JWT_SECRET;
 export const generateAccessToken = (user: IUser): string => {
   if (!jwtSecret) {
     throw new Error("JWT_SECRET is not defined in environment variables");
@@ -17,6 +17,7 @@ export const generateAccessToken = (user: IUser): string => {
       role: user.userRole   
     },
     jwtSecret,
-    { expiresIn: "7h" }
+    { expiresIn: "10h" }
   );
 };
+
