@@ -4,7 +4,7 @@ import { Request, Response } from "express";
 
 export const createProduct=async(req:Request,res:Response)=>{
     try{
-        const {prodName,prodPrice,ProdCat,prodDesc,productimage,}=req.body;
+        const {prodName,prodPrice,ProdCat,prodDesc,productimage}=req.body;
         const newProduct=new Product({
             prodName,
             prodPrice,

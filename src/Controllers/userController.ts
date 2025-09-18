@@ -41,7 +41,7 @@ export const login=async(req:Request,res:Response,next:NextFunction)=>{
     const token=generateAccessToken(existingUser);
     existingUser.accessToken=token;
     await existingUser.save();
-    return res.status(200).json({message:"User logged in successfully",existingUser});  
+    return res.status(200).json({message:"successfully Logedin",existingUser});  
 
   }
   catch(error){
