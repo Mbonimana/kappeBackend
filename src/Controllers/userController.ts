@@ -5,7 +5,7 @@ import bcryptjs from "bcryptjs";
 import { get } from "http";
 
 
-export const signin = async (req: Request, res: Response, next: NextFunction) => {
+export const SignUp = async (req: Request, res: Response, next: NextFunction) => {
   try{
     const{fullnames,email,password,userRole,phone}=req.body;
 
