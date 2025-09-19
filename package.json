@@ -2,11 +2,12 @@
   "name": "mongodb",
   "version": "1.0.0",
   "main": "dist/index.js",
-  "scripts": {
-    "build": "tsc",
-    "start": "node dist/index.js",
-    "dev": "nodemon --watch src --exec ts-node src/index.ts"
-  },
+ "scripts": {
+  "build": "tsc",
+  "start": "node dist/index.js",
+  "dev": "nodemon --watch src --exec ts-node src/index.ts"
+}
+,
   "author": "",
   "license": "ISC",
   "description": "",
