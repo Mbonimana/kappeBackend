@@ -13,7 +13,7 @@ exports.deleteProduct = exports.getProducts = exports.createProduct = void 0;
 const productModel_1 = require("../models/productModel");
 const createProduct = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const { prodName, prodPrice, ProdCat, prodDesc, productimage, } = req.body;
+        const { prodName, prodPrice, ProdCat, prodDesc, productimage } = req.body;
         const newProduct = new productModel_1.Product({
             prodName,
             prodPrice,

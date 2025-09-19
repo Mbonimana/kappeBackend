@@ -1,7 +1,6 @@
 import { Product } from "../models/productModel";
 import { Request, Response } from "express";
 
-
 export const createProduct=async(req:Request,res:Response)=>{
     try{
         const {prodName,prodPrice,ProdCat,prodDesc,productimage}=req.body;

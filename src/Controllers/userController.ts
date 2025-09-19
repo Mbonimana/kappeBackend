@@ -1,6 +1,7 @@
 import { User } from "../models/userModel";
 import { NextFunction, Request, Response } from "express";
 import { generateAccessToken } from "../utils/tokenGenetion";
+
 import bcryptjs from "bcryptjs";
 import { get } from "http";
 

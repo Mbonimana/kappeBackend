@@ -12,11 +12,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getAllUsers = exports.login = exports.signin = void 0;
+exports.getAllUsers = exports.login = exports.SignUp = void 0;
 const userModel_1 = require("../models/userModel");
 const tokenGenetion_1 = require("../utils/tokenGenetion");
 const bcryptjs_1 = __importDefault(require("bcryptjs"));
-const signin = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+const SignUp = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { fullnames, email, password, userRole, phone } = req.body;
         const existingUser = yield userModel_1.User.findOne({ email });
@@ -34,7 +34,7 @@ const signin = (req, res, next) => __awaiter(void 0, void 0, void 0, function* (
         return res.status(400).json({ message: "Error in user signin", error });
     }
 });
-exports.signin = signin;
+exports.SignUp = SignUp;
 const login = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { email, password } = req.body;
@@ -49,7 +49,7 @@ const login = (req, res, next) => __awaiter(void 0, void 0, void 0, function* ()
         const token = (0, tokenGenetion_1.generateAccessToken)(existingUser);
         existingUser.accessToken = token;
         yield existingUser.save();
-        return res.status(200).json({ message: "User logged in successfully", existingUser });
+        return res.status(200).json({ message: "successfully Logedin", existingUser });
     }
     catch (error) {
         return res.status(400).json({ message: "Error in user login", error });
