@@ -2,7 +2,7 @@ import express from "express";
 import dotenv from "dotenv";
 import { connectDB } from "./config/databaseConfiguration";
 import productRouter from "./routes/productPath";
-import userRouter from "./routes/userPath";
+import { userRouter } from "./routes/userPath";
 const cors = require('cors');
 
 dotenv.config();
@@ -21,3 +21,4 @@ app.use("/api/user",userRouter)
 app.listen(PORT, () => {
   console.log(` Server running on http://localhost:${PORT}`);
 });
+export default userRouter
