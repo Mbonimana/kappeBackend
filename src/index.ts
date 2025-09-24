@@ -5,7 +5,7 @@ import { connectDB } from "./config/databaseConfiguration";
 import productRouter from "./routes/productPath";
 import { userRouter } from "./routes/userPath";
 import cartRoutes from "./routes/CartRoutes"; // function style
-import { auth } from "./middlewares/authenitacationFunction";
+
 const cors = require("cors");
 
 dotenv.config();
@@ -19,7 +19,8 @@ connectDB();
 
 app.use("/api/products", productRouter);
 app.use("/api/user", userRouter);
-app.use("/api/cart", cartRoutes, auth); // function style
+app.use("/api/cart", cartRoutes);
+
 
 
 app.listen(PORT, () => {

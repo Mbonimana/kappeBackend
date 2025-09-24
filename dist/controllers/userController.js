@@ -21,7 +21,7 @@ const SignUp = (req, res, next) => __awaiter(void 0, void 0, void 0, function* (
         const { fullnames, email, password, userRole, phone } = req.body;
         const existingUser = yield userModel_1.User.findOne({ email });
         if (existingUser) {
-            return res.status(400).json({ message: "User already exists" });
+            return res.status(400).json({ message: "Email  exists" });
         }
         const hashedPassword = yield bcryptjs_1.default.hash(password, 10);
         const newUser = new userModel_1.User({ fullnames, email, password: hashedPassword, userRole, phone });
