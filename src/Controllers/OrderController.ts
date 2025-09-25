@@ -88,3 +88,48 @@ export const checkout = async (req: Request, res: Response) => {
     });
   }
 };
+export const getAllOrders = async (req: Request, res: Response) => {
+  try {
+    const orders = await Order.find()
+      .populate("user", "name email") // populate user info (optional)
+      .sort({ createdAt: -1 }); // latest first
+
+    return res.status(200).json({
+      status: "success",
+      count: orders.length,
+      orders,
+    });
+  } catch (error: any) {
+    console.error("Get orders error:", error);
+    return res.status(500).json({
+      status: "error",
+      message: error.message || "Failed to fetch orders",
+    });
+  }
+};
+
+// ✅ Fetch logged-in user's orders
+export const getUserOrders = async (req: Request, res: Response) => {
+  try {
+    const user = (req as any).user;
+    const userId = user?._id;
+
+    if (!userId) {
+      return res.status(401).json({ status: "error", message: "Unauthorized" });
+    }
+
+    const orders = await Order.find({ user: userId }).sort({ createdAt: -1 });
+
+    return res.status(200).json({
+      status: "success",
+      count: orders.length,
+      orders,
+    });
+  } catch (error: any) {
+    console.error("Get user orders error:", error);
+    return res.status(500).json({
+      status: "error",
+      message: error.message || "Failed to fetch orders",
+    });
+  }
+};
