@@ -18,18 +18,20 @@ const OrderModel_1 = __importDefault(require("../models/OrderModel"));
 const createOrder = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     var _a;
     try {
-        const userId = (_a = req.user) === null || _a === void 0 ? void 0 : _a.id; // from auth middleware
-        if (!userId)
-            return res.status(401).json({ message: "Unauthorized" });
         const { items, totalPrice, customerName, email, address, phone, paymentMode } = req.body;
-        if (!items || items.length === 0) {
-            return res.status(400).json({ message: "Order must contain at least one item" });
+        if (!((_a = req.user) === null || _a === void 0 ? void 0 : _a._id)) {
+            return res.status(401).json({ message: "Unauthorized" });
         }
-        if (!customerName || !email || !address || !phone || !paymentMode) {
-            return res.status(400).json({ message: "Missing required order information" });
+        // Validate cart items
+        if (!items || !Array.isArray(items) || items.length === 0) {
+            return res.status(400).json({ message: "Cart is empty or invalid" });
+        }
+        // Validate required fields
+        if (!totalPrice || !customerName || !email || !address || !phone || !paymentMode) {
+            return res.status(400).json({ message: "Missing required order fields" });
         }
         const order = new OrderModel_1.default({
-            userId,
+            userId: req.user._id,
             items,
             totalPrice,
             customerName,
@@ -37,13 +39,13 @@ const createOrder = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
             address,
             phone,
             paymentMode,
-            status: "Pending", // default status
+            status: "Pending",
         });
         yield order.save();
         res.status(201).json({ message: "Order created successfully", order });
     }
     catch (error) {
-        console.error("Order creation failed:", error);
+        console.error("Order creation error:", error);
         res.status(500).json({ message: "Failed to create order", error });
     }
 });
@@ -52,14 +54,14 @@ exports.createOrder = createOrder;
 const getUserOrders = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     var _a;
     try {
-        const userId = (_a = req.user) === null || _a === void 0 ? void 0 : _a.id;
-        if (!userId)
+        if (!((_a = req.user) === null || _a === void 0 ? void 0 : _a._id)) {
             return res.status(401).json({ message: "Unauthorized" });
-        const orders = yield OrderModel_1.default.find({ userId }).sort({ createdAt: -1 });
-        res.json({ orders });
+        }
+        const orders = yield OrderModel_1.default.find({ userId: req.user._id }).sort({ createdAt: -1 });
+        res.json(orders);
     }
     catch (error) {
-        console.error("Fetching user orders failed:", error);
+        console.error("Fetch user orders error:", error);
         res.status(500).json({ message: "Failed to fetch orders", error });
     }
 });
@@ -68,10 +70,10 @@ exports.getUserOrders = getUserOrders;
 const getAllOrders = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const orders = yield OrderModel_1.default.find().sort({ createdAt: -1 });
-        res.json({ orders });
+        res.json(orders);
     }
     catch (error) {
-        console.error("Fetching all orders failed:", error);
+        console.error("Fetch all orders error:", error);
         res.status(500).json({ message: "Failed to fetch all orders", error });
     }
 });
@@ -81,15 +83,13 @@ const updateOrderStatus = (req, res) => __awaiter(void 0, void 0, void 0, functi
     try {
         const { id } = req.params;
         const { status } = req.body;
-        if (!status)
-            return res.status(400).json({ message: "Status is required" });
         const order = yield OrderModel_1.default.findByIdAndUpdate(id, { status }, { new: true });
         if (!order)
             return res.status(404).json({ message: "Order not found" });
         res.json({ message: "Order status updated", order });
     }
     catch (error) {
-        console.error("Updating order status failed:", error);
+        console.error("Update order status error:", error);
         res.status(500).json({ message: "Failed to update order", error });
     }
 });
