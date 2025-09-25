@@ -38,7 +38,7 @@ const OrderSchema = new Schema<IOrder>(
     address: { type: String, required: true },
     phone: { type: String, required: true },
     paymentMode: { type: String, required: true },
-    status: { type: String, default: "Pending" },
+    status: { type: String, default: "Paid" },
   },
   { timestamps: true }
 );

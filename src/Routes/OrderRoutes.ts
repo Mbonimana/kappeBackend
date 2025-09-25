@@ -6,7 +6,7 @@ import { getAllOrders, getUserOrders } from "../controllers/OrderController";
 const router = Router();
 
 router.post("/checkout", authMiddleware, checkout);
-router.get("/", getAllOrders);
+router.get("/getAllOrders", getAllOrders);
 
 // Fetch logged-in user's orders
 router.get("/my-orders", authMiddleware, getUserOrders);
