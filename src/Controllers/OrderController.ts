@@ -5,6 +5,10 @@ import Cart from "../models/CartModel";
 // POST /api/orders/checkout
 export const checkout = async (req: any, res: Response) => {
   try {
+    console.log("=== CHECKOUT CALLED ===");
+    console.log("BODY RECEIVED:", req.body); // 👈 log what Render receives
+    console.log("HEADERS:", req.headers);     // 👈 log headers too
+
     const userId = req.user?._id;
     if (!userId) {
       return res.status(401).json({ status: "error", message: "Unauthorized" });
@@ -23,13 +27,12 @@ export const checkout = async (req: any, res: Response) => {
     );
 
     // get checkout form fields from request body
-    console.log("REQ.BODY RECEIVED:", req.body);
     const { customerName, email, address, phone, paymentMode } = req.body;
     if (!customerName || !email || !address || !phone || !paymentMode) {
       return res.status(400).json({ status: "error", message: "Missing checkout fields" });
     }
 
-    // create order from cart + form data
+    // create order
     const order = new Order({
       user: userId,
       items: cartItems.map((item) => ({
@@ -45,12 +48,10 @@ export const checkout = async (req: any, res: Response) => {
       address,
       phone,
       paymentMode,
-      status: "pending", // pending until payment is confirmed
+      status: "pending",
     });
 
     await order.save();
-
-    // clear cart
     await Cart.deleteMany({ userId });
 
     return res.status(201).json({
