@@ -3,36 +3,57 @@ import Order from "../models/OrderModel";
 import Cart from "../models/CartModel";
 
 // POST /api/orders/checkout
-export const checkout = async (req: any, res: Response) => {
+export const checkout = async (req: Request, res: Response) => {
   try {
     console.log("=== CHECKOUT CALLED ===");
     console.log("BODY RECEIVED:", req.body); // 👈 log what Render receives
     console.log("HEADERS:", req.headers);     // 👈 log headers too
 
-    const userId = req.user?._id;
+    const user = (req as any).user;
+    const userId = user?._id;
+
     if (!userId) {
       return res.status(401).json({ status: "error", message: "Unauthorized" });
     }
 
-    // find user's cart
-    const cartItems = await Cart.find({ userId });
-    if (!cartItems || cartItems.length === 0) {
-      return res.status(400).json({ status: "error", message: "Your cart is empty" });
+    // ✅ Ensure body fields are parsed correctly
+    const {
+      customerName = "",
+      email = "",
+      address = "",
+      phone = "",
+      paymentMode = ""
+    } = req.body || {};
+
+    if (
+      !customerName.trim() ||
+      !email.trim() ||
+      !address.trim() ||
+      !phone.trim() ||
+      !paymentMode.trim()
+    ) {
+      return res.status(400).json({
+        status: "error",
+        message: "Missing checkout fields"
+      });
     }
 
-    // calculate total
+    // ✅ Find user's cart
+    const cartItems = await Cart.find({ userId });
+    if (!cartItems || cartItems.length === 0) {
+      return res.status(400).json({
+        status: "error",
+        message: "Your cart is empty"
+      });
+    }
+
+    // ✅ Calculate total
     const totalAmount = cartItems.reduce(
       (sum, item) => sum + item.price * item.quantity,
       0
     );
 
-    // get checkout form fields from request body
-    const { customerName, email, address, phone, paymentMode } = req.body;
-    if (!customerName || !email || !address || !phone || !paymentMode) {
-      return res.status(400).json({ status: "error", message: "Missing checkout fields" });
-    }
-
-    // create order
+    // ✅ Create order
     const order = new Order({
       user: userId,
       items: cartItems.map((item) => ({
