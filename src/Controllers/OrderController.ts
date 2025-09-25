@@ -1,102 +1,60 @@
 import { Request, Response } from "express";
 import Order from "../models/OrderModel";
+import Cart from "../models/CartModel";
 
-// Create new order
-export const createOrder = async (req: any, res: Response) => {
+// POST /api/orders/checkout
+export const checkout = async (req: any, res: Response) => {
   try {
-    // Ensure authenticated user
-    if (!req.user?._id) {
-      return res.status(401).json({ status: "error", message: "Unauthorized. User not logged in." });
+    // userId comes from auth middleware (req.user)
+    const userId = req.user?._id;
+    if (!userId) {
+      return res.status(401).json({ status: "error", message: "Unauthorized" });
     }
 
-    const { items, totalPrice, customerName, email, address, phone, paymentMode } = req.body;
-
-    // Validate cart items
-    if (!items || !Array.isArray(items) || items.length === 0) {
-      return res.status(400).json({ status: "error", message: "Cart is empty or invalid" });
+    // find user's cart
+    const cartItems = await Cart.find({ userId });
+    if (!cartItems || cartItems.length === 0) {
+      return res.status(400).json({
+        status: "error",
+        message: "Your cart is empty",
+      });
     }
 
-    // Validate required fields
-    if (!totalPrice || !customerName || !email || !address || !phone || !paymentMode) {
-      return res.status(400).json({ status: "error", message: "Missing required order fields" });
-    }
-
-    // Create order
-    const order = new Order({
-      userId: req.user._id,
-      items,
-      totalPrice,
-      customerName,
-      email,
-      address,
-      phone,
-      paymentMode,
-      status: "Pending",
-    });
-
-    const savedOrder = await order.save();
-    res.status(201).json({ status: "success", message: "Order created successfully", order: savedOrder });
-  } catch (error: any) {
-    console.error("Order creation error:", error);
-    res.status(500).json({ status: "error", message: "Failed to create order", error: error.message });
-  }
-};
-
-// Get orders for logged-in user
-export const getUserOrders = async (req: any, res: Response) => {
-  try {
-    if (!req.user?._id) {
-      return res.status(401).json({ status: "error", message: "Unauthorized. User not logged in." });
-    }
-
-    const orders = await Order.find({ userId: req.user._id }).sort({ createdAt: -1 });
-    res.status(200).json({ status: "success", orders });
-  } catch (error: any) {
-    console.error("Fetch user orders error:", error);
-    res.status(500).json({ status: "error", message: "Failed to fetch user orders", error: error.message });
-  }
-};
-
-// Get all orders (Admin only)
-export const getAllOrders = async (req: any, res: Response) => {
-  try {
-    if (!req.user || req.user.role !== "admin") {
-      return res.status(403).json({ status: "error", message: "Unauthorized. Admin access required." });
-    }
-
-    const orders = await Order.find().sort({ createdAt: -1 });
-    res.status(200).json({ status: "success", orders });
-  } catch (error: any) {
-    console.error("Fetch all orders error:", error);
-    res.status(500).json({ status: "error", message: "Failed to fetch all orders", error: error.message });
-  }
-};
-
-// Update order status
-export const updateOrderStatus = async (req: any, res: Response) => {
-  try {
-    const { id } = req.params;
-    const { status } = req.body;
-
-    if (!id) {
-      return res.status(400).json({ status: "error", message: "Order ID is required" });
-    }
-
-    if (!status) {
-      return res.status(400).json({ status: "error", message: "Order status is required" });
-    }
-
-    const order = await Order.findByIdAndUpdate(
-      id,
-      { status },
-      { new: true }
+    // calculate total
+    const totalAmount = cartItems.reduce(
+      (sum, item) => sum + item.price * item.quantity,
+      0
     );
 
-    if (!order) return res.status(404).json({ status: "error", message: "Order not found" });
+    // create order from cart
+    const order = new Order({
+      userId,
+      items: cartItems.map((item) => ({
+        productId: item.productId,
+        title: item.productName,
+        price: item.price,
+        quantity: item.quantity,
+        image: item.image,
+      })),
+      totalAmount,
+      status: "pending", // set to pending until payment is confirmed
+    });
 
-    res.status(200).json({ status: "success", message: "Order status updated", order });
+    await order.save();
+
+    // clear cart
+    await Cart.deleteMany({ userId });
+
+    return res.status(201).json({
+      status: "success",
+      message: "Order placed successfully",
+      order,
+    });
   } catch (error: any) {
-    console.error("Update order status error:", error);
-    res.status(500).json({ status: "error", message: "Failed to update order", error: error.message });
+    console.error("Checkout error:", error);
+    return res.status(500).json({
+      status: "error",
+      message: error.message || "Failed to place order",
+    });
   }
 };

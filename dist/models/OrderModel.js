@@ -45,20 +45,7 @@ const OrderSchema = new mongoose_1.Schema({
             image: { type: String },
         },
     ],
-    totalPrice: { type: Number, required: true },
-    customerName: { type: String, required: true },
-    email: { type: String, required: true },
-    address: { type: String, required: true },
-    phone: { type: String, required: true },
-    paymentMode: {
-        type: String,
-        enum: ["CASH_ON_DELIVERY", "MOBILE_MONEY", "CARD"],
-        required: true,
-    },
-    status: {
-        type: String,
-        enum: ["PENDING", "PAID", "SHIPPED", "DELIVERED", "CANCELLED"],
-        default: "PENDING",
-    },
+    totalAmount: { type: Number, required: true },
+    status: { type: String, enum: ["pending", "paid", "cancelled"], default: "pending" },
 }, { timestamps: true });
 exports.default = mongoose_1.default.model("Order", OrderSchema);

@@ -1,23 +1,16 @@
-import mongoose, { Document, Schema } from "mongoose";
-
-export interface IOrderItem {
-  productId: string;
-  title: string;
-  price: number;
-  quantity: number;
-  image?: string;
-}
+import mongoose, { Schema, Document } from "mongoose";
 
 export interface IOrder extends Document {
   userId: string;
-  items: IOrderItem[];
-  totalPrice: number;
-  customerName: string;
-  email: string;
-  address: string;
-  phone: string;
-  paymentMode: "CASH_ON_DELIVERY" | "MOBILE_MONEY" | "CARD";
-  status: "PENDING" | "PAID" | "SHIPPED" | "DELIVERED" | "CANCELLED";
+  items: {
+    productId: string;
+    title: string;
+    price: number;
+    quantity: number;
+    image: string;
+  }[];
+  totalAmount: number;
+  status: "pending" | "paid" | "cancelled";
   createdAt: Date;
 }
 
@@ -33,21 +26,8 @@ const OrderSchema: Schema = new Schema(
         image: { type: String },
       },
     ],
-    totalPrice: { type: Number, required: true },
-    customerName: { type: String, required: true },
-    email: { type: String, required: true },
-    address: { type: String, required: true },
-    phone: { type: String, required: true },
-    paymentMode: {
-      type: String,
-      enum: ["CASH_ON_DELIVERY", "MOBILE_MONEY", "CARD"],
-      required: true,
-    },
-    status: {
-      type: String,
-      enum: ["PENDING", "PAID", "SHIPPED", "DELIVERED", "CANCELLED"],
-      default: "PENDING",
-    },
+    totalAmount: { type: Number, required: true },
+    status: { type: String, enum: ["pending", "paid", "cancelled"], default: "pending" },
   },
   { timestamps: true }
 );
