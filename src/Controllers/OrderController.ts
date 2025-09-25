@@ -23,6 +23,7 @@ export const checkout = async (req: any, res: Response) => {
     );
 
     // get checkout form fields from request body
+    console.log("REQ.BODY RECEIVED:", req.body);
     const { customerName, email, address, phone, paymentMode } = req.body;
     if (!customerName || !email || !address || !phone || !paymentMode) {
       return res.status(400).json({ status: "error", message: "Missing checkout fields" });
