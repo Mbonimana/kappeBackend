@@ -5,7 +5,6 @@ import Cart from "../models/CartModel";
 // POST /api/orders/checkout
 export const checkout = async (req: any, res: Response) => {
   try {
-    // userId comes from auth middleware (req.user)
     const userId = req.user?._id;
     if (!userId) {
       return res.status(401).json({ status: "error", message: "Unauthorized" });
@@ -14,10 +13,7 @@ export const checkout = async (req: any, res: Response) => {
     // find user's cart
     const cartItems = await Cart.find({ userId });
     if (!cartItems || cartItems.length === 0) {
-      return res.status(400).json({
-        status: "error",
-        message: "Your cart is empty",
-      });
+      return res.status(400).json({ status: "error", message: "Your cart is empty" });
     }
 
     // calculate total
@@ -26,18 +22,29 @@ export const checkout = async (req: any, res: Response) => {
       0
     );
 
-    // create order from cart
+    // get checkout form fields from request body
+    const { customerName, email, address, phone, paymentMode } = req.body;
+    if (!customerName || !email || !address || !phone || !paymentMode) {
+      return res.status(400).json({ status: "error", message: "Missing checkout fields" });
+    }
+
+    // create order from cart + form data
     const order = new Order({
-      userId,
+      user: userId,
       items: cartItems.map((item) => ({
-        productId: item.productId,
+        product: item.productId,
+        quantity: item.quantity,
         title: item.productName,
         price: item.price,
-        quantity: item.quantity,
         image: item.image,
       })),
-      totalAmount,
-      status: "pending", // set to pending until payment is confirmed
+      totalPrice: totalAmount,
+      customerName,
+      email,
+      address,
+      phone,
+      paymentMode,
+      status: "pending", // pending until payment is confirmed
     });
 
     await order.save();

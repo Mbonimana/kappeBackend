@@ -1,33 +1,44 @@
 import mongoose, { Schema, Document } from "mongoose";
 
 export interface IOrder extends Document {
-  userId: string;
+  user: mongoose.Types.ObjectId;
   items: {
-    productId: string;
+    product: mongoose.Types.ObjectId;
     title: string;
     price: number;
     quantity: number;
     image: string;
   }[];
-  totalAmount: number;
-  status: "pending" | "paid" | "cancelled";
+  totalPrice: number;
+  customerName: string;
+  email: string;
+  address: string;
+  phone: string;
+  paymentMode: string;
+  status: string;
   createdAt: Date;
+  updatedAt: Date;
 }
 
-const OrderSchema: Schema = new Schema(
+const OrderSchema = new Schema<IOrder>(
   {
-    userId: { type: String, required: true },
+    user: { type: Schema.Types.ObjectId, ref: "User", required: true },
     items: [
       {
-        productId: { type: String, required: true },
+        product: { type: Schema.Types.ObjectId, ref: "Product", required: true },
         title: { type: String, required: true },
         price: { type: Number, required: true },
         quantity: { type: Number, required: true },
-        image: { type: String },
+        image: { type: String, required: true },
       },
     ],
-    totalAmount: { type: Number, required: true },
-    status: { type: String, enum: ["pending", "paid", "cancelled"], default: "pending" },
+    totalPrice: { type: Number, required: true },
+    customerName: { type: String, required: true },
+    email: { type: String, required: true },
+    address: { type: String, required: true },
+    phone: { type: String, required: true },
+    paymentMode: { type: String, required: true },
+    status: { type: String, default: "Pending" },
   },
   { timestamps: true }
 );
