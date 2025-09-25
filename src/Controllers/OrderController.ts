@@ -4,8 +4,18 @@ import Order from "../models/OrderModel";
 // Create new order
 export const createOrder = async (req: Request, res: Response) => {
   try {
+    const userId = (req as any).user?.id; // from auth middleware
+    if (!userId) return res.status(401).json({ message: "Unauthorized" });
+
     const { items, totalPrice, customerName, email, address, phone, paymentMode } = req.body;
-    const userId = (req as any).user.id; // from middleware
+
+    if (!items || items.length === 0) {
+      return res.status(400).json({ message: "Order must contain at least one item" });
+    }
+
+    if (!customerName || !email || !address || !phone || !paymentMode) {
+      return res.status(400).json({ message: "Missing required order information" });
+    }
 
     const order = new Order({
       userId,
@@ -16,11 +26,14 @@ export const createOrder = async (req: Request, res: Response) => {
       address,
       phone,
       paymentMode,
+      status: "Pending", // default status
     });
 
     await order.save();
-    res.status(201).json(order);
+
+    res.status(201).json({ message: "Order created successfully", order });
   } catch (error) {
+    console.error("Order creation failed:", error);
     res.status(500).json({ message: "Failed to create order", error });
   }
 };
@@ -28,10 +41,13 @@ export const createOrder = async (req: Request, res: Response) => {
 // Get orders for logged-in user
 export const getUserOrders = async (req: Request, res: Response) => {
   try {
-    const userId = (req as any).user.id;
+    const userId = (req as any).user?.id;
+    if (!userId) return res.status(401).json({ message: "Unauthorized" });
+
     const orders = await Order.find({ userId }).sort({ createdAt: -1 });
-    res.json(orders);
+    res.json({ orders });
   } catch (error) {
+    console.error("Fetching user orders failed:", error);
     res.status(500).json({ message: "Failed to fetch orders", error });
   }
 };
@@ -40,8 +56,9 @@ export const getUserOrders = async (req: Request, res: Response) => {
 export const getAllOrders = async (req: Request, res: Response) => {
   try {
     const orders = await Order.find().sort({ createdAt: -1 });
-    res.json(orders);
+    res.json({ orders });
   } catch (error) {
+    console.error("Fetching all orders failed:", error);
     res.status(500).json({ message: "Failed to fetch all orders", error });
   }
 };
@@ -52,16 +69,15 @@ export const updateOrderStatus = async (req: Request, res: Response) => {
     const { id } = req.params;
     const { status } = req.body;
 
-    const order = await Order.findByIdAndUpdate(
-      id,
-      { status },
-      { new: true }
-    );
+    if (!status) return res.status(400).json({ message: "Status is required" });
+
+    const order = await Order.findByIdAndUpdate(id, { status }, { new: true });
 
     if (!order) return res.status(404).json({ message: "Order not found" });
 
-    res.json(order);
+    res.json({ message: "Order status updated", order });
   } catch (error) {
+    console.error("Updating order status failed:", error);
     res.status(500).json({ message: "Failed to update order", error });
   }
 };
