@@ -2,23 +2,26 @@ import { Request, Response } from "express";
 import Order from "../models/OrderModel";
 
 // Create new order
-export const createOrder = async (req: Request, res: Response) => {
+export const createOrder = async (req: any, res: Response) => {
   try {
-    const userId = (req as any).user?.id; // from auth middleware
-    if (!userId) return res.status(401).json({ message: "Unauthorized" });
-
     const { items, totalPrice, customerName, email, address, phone, paymentMode } = req.body;
 
-    if (!items || items.length === 0) {
-      return res.status(400).json({ message: "Order must contain at least one item" });
+    if (!req.user?._id) {
+      return res.status(401).json({ message: "Unauthorized" });
     }
 
-    if (!customerName || !email || !address || !phone || !paymentMode) {
-      return res.status(400).json({ message: "Missing required order information" });
+    // Validate cart items
+    if (!items || !Array.isArray(items) || items.length === 0) {
+      return res.status(400).json({ message: "Cart is empty or invalid" });
+    }
+
+    // Validate required fields
+    if (!totalPrice || !customerName || !email || !address || !phone || !paymentMode) {
+      return res.status(400).json({ message: "Missing required order fields" });
     }
 
     const order = new Order({
-      userId,
+      userId: req.user._id,
       items,
       totalPrice,
       customerName,
@@ -26,28 +29,28 @@ export const createOrder = async (req: Request, res: Response) => {
       address,
       phone,
       paymentMode,
-      status: "Pending", // default status
+      status: "Pending",
     });
 
     await order.save();
-
     res.status(201).json({ message: "Order created successfully", order });
   } catch (error) {
-    console.error("Order creation failed:", error);
+    console.error("Order creation error:", error);
     res.status(500).json({ message: "Failed to create order", error });
   }
 };
 
 // Get orders for logged-in user
-export const getUserOrders = async (req: Request, res: Response) => {
+export const getUserOrders = async (req: any, res: Response) => {
   try {
-    const userId = (req as any).user?.id;
-    if (!userId) return res.status(401).json({ message: "Unauthorized" });
+    if (!req.user?._id) {
+      return res.status(401).json({ message: "Unauthorized" });
+    }
 
-    const orders = await Order.find({ userId }).sort({ createdAt: -1 });
-    res.json({ orders });
+    const orders = await Order.find({ userId: req.user._id }).sort({ createdAt: -1 });
+    res.json(orders);
   } catch (error) {
-    console.error("Fetching user orders failed:", error);
+    console.error("Fetch user orders error:", error);
     res.status(500).json({ message: "Failed to fetch orders", error });
   }
 };
@@ -56,9 +59,9 @@ export const getUserOrders = async (req: Request, res: Response) => {
 export const getAllOrders = async (req: Request, res: Response) => {
   try {
     const orders = await Order.find().sort({ createdAt: -1 });
-    res.json({ orders });
+    res.json(orders);
   } catch (error) {
-    console.error("Fetching all orders failed:", error);
+    console.error("Fetch all orders error:", error);
     res.status(500).json({ message: "Failed to fetch all orders", error });
   }
 };
@@ -69,15 +72,17 @@ export const updateOrderStatus = async (req: Request, res: Response) => {
     const { id } = req.params;
     const { status } = req.body;
 
-    if (!status) return res.status(400).json({ message: "Status is required" });
-
-    const order = await Order.findByIdAndUpdate(id, { status }, { new: true });
+    const order = await Order.findByIdAndUpdate(
+      id,
+      { status },
+      { new: true }
+    );
 
     if (!order) return res.status(404).json({ message: "Order not found" });
 
     res.json({ message: "Order status updated", order });
   } catch (error) {
-    console.error("Updating order status failed:", error);
+    console.error("Update order status error:", error);
     res.status(500).json({ message: "Failed to update order", error });
   }
 };
