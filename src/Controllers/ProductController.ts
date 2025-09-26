@@ -1,23 +1,36 @@
 import { Product } from "../models/productModel";
 import { Request, Response } from "express";
+import cloudinary from "../utils/Cloudhandle";
+export const createProduct = async (req: Request, res: Response) => {
+    try {
+        const { prodName, prodDesc, prodPrice, ProdCat ,productimage} = req.body;
 
-export const createProduct=async(req:Request,res:Response)=>{
-    try{
-        const {prodName,prodPrice,ProdCat,prodDesc,productimage}=req.body;
-        const newProduct=new Product({
+    //      prodName:string;
+    // prodDesc:string;
+    // prodPrice: number;
+    // ProdCat:string;
+    // productimage:string;
+    
+        if(!req.file){
+            return res.status(400).json({message:"No image uploaded"})
+        }
+        const result=await cloudinary.uploader.upload(req.file.path,{
+            folder:"products"
+        });
+        const imageUrl=result.secure_url;
+        // Create new product
+        const newProduct = new Product({
             prodName,
+            prodDesc,
             prodPrice,
             ProdCat,
-            prodDesc,
-            productimage,
-           
-            
+            productimage:imageUrl
         });
-        const savedProduct=await newProduct.save();
-        res.status(201).json({message:'Product created successfully',product:savedProduct});
+        const savedProduct = await newProduct.save();
+        res.status(201).json({ message: 'Product created successfully', product: savedProduct });
     }
-    catch(error){
-        res.status(500).json({message:'Server Error',error});
+    catch (error) {
+        res.status(500).json({ message: 'Server Error', error });
     }
 }
 

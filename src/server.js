@@ -3,6 +3,7 @@ const dotenv = require('dotenv');
 const { connectDB } = require('./config/databaseConfiguration');
 const mainRouter = require('./routes/indexRouting');
 
+
 dotenv.config();
 
 const app = express();
@@ -31,3 +32,4 @@ app.use("/api_v1", mainRouter);
 app.listen(port, () => {
   console.log(`The server is running: http://localhost:${port}`);
 });
+

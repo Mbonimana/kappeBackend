@@ -3,6 +3,7 @@ import { connectDB } from './config/databaseConfiguration';
 import mainRouter from './routes/indexRouting';
 
 
+
 import dotenv from 'dotenv';
 dotenv.config();
 const app = express();
@@ -23,4 +24,6 @@ const corsOptions = {
 // app.use(cors(corsOptions));
 app.use(express.json());
 app.use("/api_v1", mainRouter)
+
+
 

@@ -69,7 +69,7 @@ export const checkout = async (req: Request, res: Response) => {
       address,
       phone,
       paymentMode,
-      status: "pending",
+      status: "Paid",
     });
 
     await order.save();
