@@ -15,8 +15,9 @@ const cors = require("cors");
 dotenv_1.default.config();
 const app = (0, express_1.default)();
 const PORT = process.env.PORT || 5000;
-app.use(express_1.default.json());
 app.use(cors());
+app.use(express_1.default.json()); // 👈 parses JSON
+app.use(express_1.default.urlencoded({ extended: true }));
 (0, databaseConfiguration_1.connectDB)();
 app.use("/api/products", productPath_1.default);
 app.use("/api/user", userPath_1.userRouter);
@@ -25,24 +26,3 @@ app.use("/api/orders", OrderRoutes_1.default);
 app.listen(PORT, () => {
     console.log(`Server running on http://localhost:${PORT}`);
 });
-// http://localhost:5000/api/orders/checkout
-// {
-//   "userId": "1234567890",
-//   "cartItems": [
-//     {
-//       "productId": "p1",
-//       "title": "Test Product",
-//       "price": 100,
-//       "quantity": 2,
-//       "image": "http://example.com/image.jpg"
-//     },
-//     {
-//       "productId": "p2",
-//       "title": "Another Product",
-//       "price": 50,
-//       "quantity": 1,
-//       "image": "http://example.com/image2.jpg"
-//     }
-//   ],
-//   "totalAmount": 250
-// }

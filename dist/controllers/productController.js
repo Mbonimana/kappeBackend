@@ -8,18 +8,30 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.deleteProduct = exports.getProducts = exports.createProduct = void 0;
 const productModel_1 = require("../models/productModel");
+const Cloudhandle_1 = __importDefault(require("../utils/Cloudhandle"));
 const createProduct = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const { prodName, prodPrice, ProdCat, prodDesc, productimage } = req.body;
+        const { prodName, prodDesc, prodPrice, ProdCat, productimage } = req.body;
+        if (!req.file) {
+            return res.status(400).json({ message: "No image uploaded" });
+        }
+        const result = yield Cloudhandle_1.default.uploader.upload(req.file.path, {
+            folder: "products"
+        });
+        const imageUrl = result.secure_url;
+        // Create new product
         const newProduct = new productModel_1.Product({
             prodName,
+            prodDesc,
             prodPrice,
             ProdCat,
-            prodDesc,
-            productimage,
+            productimage: imageUrl
         });
         const savedProduct = yield newProduct.save();
         res.status(201).json({ message: 'Product created successfully', product: savedProduct });

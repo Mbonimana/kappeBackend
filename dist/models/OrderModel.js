@@ -35,17 +35,22 @@ var __importStar = (this && this.__importStar) || (function () {
 Object.defineProperty(exports, "__esModule", { value: true });
 const mongoose_1 = __importStar(require("mongoose"));
 const OrderSchema = new mongoose_1.Schema({
-    userId: { type: String, required: true },
+    user: { type: mongoose_1.Schema.Types.ObjectId, ref: "User", required: true },
     items: [
         {
-            productId: { type: String, required: true },
+            product: { type: mongoose_1.Schema.Types.ObjectId, ref: "Product", required: true },
             title: { type: String, required: true },
             price: { type: Number, required: true },
             quantity: { type: Number, required: true },
-            image: { type: String },
+            image: { type: String, required: true },
         },
     ],
-    totalAmount: { type: Number, required: true },
-    status: { type: String, enum: ["pending", "paid", "cancelled"], default: "pending" },
+    totalPrice: { type: Number, required: true },
+    customerName: { type: String, required: true },
+    email: { type: String, required: true },
+    address: { type: String, required: true },
+    phone: { type: String, required: true },
+    paymentMode: { type: String, required: true },
+    status: { type: String, default: "Paid" },
 }, { timestamps: true });
 exports.default = mongoose_1.default.model("Order", OrderSchema);
