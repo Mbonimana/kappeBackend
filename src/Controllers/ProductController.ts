@@ -5,11 +5,7 @@ export const createProduct = async (req: Request, res: Response) => {
     try {
         const { prodName, prodDesc, prodPrice, ProdCat ,productimage} = req.body;
 
-    //      prodName:string;
-    // prodDesc:string;
-    // prodPrice: number;
-    // ProdCat:string;
-    // productimage:string;
+  
     
         if(!req.file){
             return res.status(400).json({message:"No image uploaded"})
