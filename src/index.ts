@@ -6,6 +6,8 @@ import productRouter from "./routes/productPath";
 import { userRouter } from "./routes/userPath";
 import cartRoutes from "./routes/CartRoutes"; // function style
 import orderRoutes from "./routes/OrderRoutes";
+import contactRouter from "./routes/ContactRoutes";
+import otpRouter from "./routes/OtpRoutes";
 
 const cors = require("cors");
 
@@ -24,6 +26,8 @@ app.use("/api/products", productRouter);
 app.use("/api/user", userRouter);
 app.use("/api/cart", cartRoutes);
 app.use("/api/orders", orderRoutes);
+app.use("/api/contact", contactRouter);
+app.use("/api/otp", otpRouter);
 
 
 
