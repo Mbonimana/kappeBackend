@@ -16,11 +16,14 @@ exports.userRouter = void 0;
 const userController_1 = require("../controllers/userController");
 const express_1 = __importDefault(require("express"));
 const authenitacationFunction_1 = require("../middlewares/authenitacationFunction");
+const OtpController_1 = require("../controllers/OtpController");
 const userRouter = express_1.default.Router();
 exports.userRouter = userRouter;
 userRouter.post("/userRegistration", userController_1.SignUp);
 userRouter.post("/userLogin", userController_1.login);
 userRouter.get("/getAllUsers", userController_1.getAllUsers);
+userRouter.post('/send-otp', OtpController_1.sendOTP);
+userRouter.post("/reset-password", userController_1.resetPasswordWithOTP);
 // Example: GET /api/user/me
 userRouter.get("/me", authenitacationFunction_1.requireSignin, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {

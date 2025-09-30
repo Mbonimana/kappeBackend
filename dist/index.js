@@ -11,6 +11,7 @@ const productPath_1 = __importDefault(require("./routes/productPath"));
 const userPath_1 = require("./routes/userPath");
 const CartRoutes_1 = __importDefault(require("./routes/CartRoutes")); // function style
 const OrderRoutes_1 = __importDefault(require("./routes/OrderRoutes"));
+const ContactRoutes_1 = __importDefault(require("./routes/ContactRoutes"));
 const cors = require("cors");
 dotenv_1.default.config();
 const app = (0, express_1.default)();
@@ -23,6 +24,7 @@ app.use("/api/products", productPath_1.default);
 app.use("/api/user", userPath_1.userRouter);
 app.use("/api/cart", CartRoutes_1.default);
 app.use("/api/orders", OrderRoutes_1.default);
+app.use("/api/contact", ContactRoutes_1.default);
 app.listen(PORT, () => {
     console.log(`Server running on http://localhost:${PORT}`);
 });
