@@ -89,10 +89,27 @@ export const resetPasswordWithOTP = async (req: Request, res: Response) => {
 
     // Send confirmation email
     const htmlContent = `
-      <p>Hello ${user.fullnames},</p>
-      <p>Your password has been successfully changed.</p>
-      <p>If you did not perform this action, please contact support immediately.</p>
-    `;
+  <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto; padding: 20px; border: 1px solid #e0e0e0; border-radius: 10px; background-color: #f9f9f9;">
+    <h2 style="color: #333333; text-align: center;">Password Changed Successfully</h2>
+    <p style="color: #555555; font-size: 16px;">
+      Hello <strong>${user.fullnames}</strong>,
+    </p>
+    <p style="color: #555555; font-size: 16px;">
+      Your password has been successfully changed. If you did not perform this action, please contact our support team immediately.
+    </p>
+    <p style="color: #555555; font-size: 16px;">
+      <strong>Support Email:</strong> support@work-kappe-ui.vercel.app
+    </p>
+    <div style="text-align: center; margin-top: 30px;">
+      <a href="https://work-kappe-ui.vercel.app/Login" style="background-color: #FFA500; color: #fff; padding: 10px 20px; border-radius: 5px; text-decoration: none; font-weight: bold;">
+        Login to Your Account
+      </a>
+    </div>
+    <p style="color: #999999; font-size: 12px; text-align: center; margin-top: 20px;">
+      © ${new Date().getFullYear()} Kapee UI by Manasseh . All rights reserved.
+    </p>
+  </div>
+`;
 
     const mailSent = await mailsender(email, "Password Changed Successfully", htmlContent);
     if (!mailSent) {
