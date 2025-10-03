@@ -116,7 +116,7 @@ paths:
           description: Current user profile
         '401':
           description: Unauthorized
-  /product/create-product:
+  /products/create-product:
     post:
       summary: Create a new product
       tags: [Product]
@@ -144,14 +144,14 @@ paths:
           description: Product created successfully
         '400':
           description: No image uploaded
-  /product/get-products:
+  /products/get-products:
     get:
       summary: Get all products
       tags: [Product]
       responses:
         '200':
           description: Products fetched successfully
-  /product/delete-product/{id}:
+  /products/delete-product/{id}:
     delete:
       summary: Delete a product
       tags: [Product]
