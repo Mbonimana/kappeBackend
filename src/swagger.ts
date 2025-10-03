@@ -1,4 +1,3 @@
-// swagger.ts (or swagger.js if not using TypeScript)
 import swaggerUI from "swagger-ui-express";
 import yaml from "js-yaml";
 import fs from "fs";

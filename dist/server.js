@@ -14,6 +14,7 @@ const port = process.env.PORT || 3000;
 app.listen(port, () => {
     console.log(`the server is running:http://localhost:${port}`);
 });
+app.get("/test", (req, res) => res.send("Server is working"));
 const corsOptions = {
     origin: ["http://localhost:5173", "http://localhost:3000"],
     methods: ["GET", "POST", "PUT", "DELETE"],

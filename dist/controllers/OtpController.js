@@ -30,10 +30,30 @@ const sendOTP = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     console.log(`OTP for ${email}: ${otp}`); // debugging
     // Prepare email content
     const htmlContent = `
-    <p>Hello ${user.fullnames},</p>
-    <p>Your Password Reset OTP code is: <b>${otp}</b></p>
-    <p>It expires in 5 minutes.</p>
-  `;
+  <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto; padding: 20px; border: 1px solid #e0e0e0; border-radius: 10px; background-color: #f9f9f9;">
+    <h2 style="color: #333333; text-align: center;">Password Reset OTP</h2>
+    <p style="color: #555555; font-size: 16px;">
+      Hello <strong>${user.fullnames}</strong>,
+    </p>
+    <p style="color: #555555; font-size: 16px;">
+      Your Password Reset OTP code is:
+      <span style="display: inline-block; background-color: #FFA500; color: #ffffff; font-weight: bold; padding: 5px 10px; border-radius: 5px; margin-top: 5px;">
+        ${otp}
+      </span>
+    </p>
+    <p style="color: #555555; font-size: 14px; margin-top: 10px;">
+      This OTP will expire in 5 minutes. Please use it as soon as possible.
+    </p>
+    <div style="text-align: center; margin-top: 20px;">
+      <a href="https://yourdomain.com/login" style="background-color: #FFA500; color: #fff; padding: 10px 20px; border-radius: 5px; text-decoration: none; font-weight: bold;">
+        Go to Login
+      </a>
+    </div>
+    <p style="color: #999999; font-size: 12px; text-align: center; margin-top: 20px;">
+      © ${new Date().getFullYear()} Your Company Name. All rights reserved.
+    </p>
+  </div>
+`;
     // Send email using your mailsender function
     const mailSent = yield (0, sendEmails_1.default)(email, "Password Reset OTP", htmlContent);
     if (!mailSent) {
