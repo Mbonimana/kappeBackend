@@ -4,15 +4,15 @@
   dotenv.config();
 
 
-  const transporter: Transporter = nodemailer.createTransport({
-  host: "smtp.gmail.com",
-  port: 587,
-  secure: false,
-  auth: {
-    user: process.env.EMAIL_NAME,
-    pass: process.env.EMAIL_PASSWORD, // your 16-char app password
-  },
-});
+    const transporter: Transporter = nodemailer.createTransport({
+    host: "smtp.gmail.com",
+    port: 587,
+    secure: false,
+    auth: {
+      user: process.env.EMAIL_NAME,
+      pass: process.env.EMAIL_PASSWORD, // your 16-char app password
+    },
+  });
   //function to send mail
 
   const mailsender = async (
