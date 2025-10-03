@@ -4,7 +4,7 @@ info:
   version: 1.0.0
   description: Full API documentation for KappeBackend project
 servers:
-  - url: https://kappebackend.onrender.com/
+  - url: https://kappebackend.onrender.com/api
 paths:
   /user/userRegistration:
     post:
