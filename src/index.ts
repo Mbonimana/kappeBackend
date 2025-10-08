@@ -8,6 +8,13 @@ import cartRoutes from "./routes/CartRoutes"; // function style
 import orderRoutes from "./routes/OrderRoutes";
 import contactRouter from "./routes/ContactRoutes";
 import { swaggerSpec, swaggerUI } from "./swagger";
+import authRouter from "./routes/auth";
+import "./utils/passport";
+
+
+const passportSetup = require("./utils/passport");
+
+
 
 const cors = require("cors");
 
@@ -27,7 +34,7 @@ app.use("/api/cart", cartRoutes);
 app.use("/api/orders", orderRoutes);
 app.use("/api/contact", contactRouter);
 app.use("/api-docs", swaggerUI.serve, swaggerUI.setup(swaggerSpec));
-
+app.use("/api/auth", authRouter);
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
 });

@@ -1,11 +1,15 @@
 import express from 'express';
 import { connectDB } from './config/databaseConfiguration';
 import mainRouter from './routes/indexRouting';
-
-
-
-
 import dotenv from 'dotenv';
+import passport from 'passport';
+import cookieSession from 'cookie-session';
+
+
+
+
+
+
 dotenv.config();
 const app = express();
 const port = process.env.PORT || 3000;
@@ -22,6 +26,17 @@ const corsOptions = {
     allowedHeaders: ["Content-Type", "Authorization"],
     credentials: true,
 };
+// app.use(
+//     cookieSession({
+//         name:"session",
+//         keys:["cyberwolve"],
+//         maxAge: 24*60*60*100,
+//     })
+
+// );
+app.use(passport.initialize());
+
+
 // app.use(cors(corsOptions));
 app.use(express.json());
 app.use("/api_v1", mainRouter)

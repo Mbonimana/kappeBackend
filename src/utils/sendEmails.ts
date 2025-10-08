@@ -11,6 +11,7 @@ const transporter: Transporter = nodemailer.createTransport({
   auth: {
     user: process.env.EMAIL_NAME,
     pass: process.env.EMAIL_PASSWORD, // 16-char app password
+  
   },
 });
 
@@ -25,6 +26,7 @@ const mailsender = async (
       to,
       subject,
       html: htmlContent,
+      
     });
     console.log("Email Successfully Sent");
     return true;
