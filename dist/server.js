@@ -7,6 +7,7 @@ const express_1 = __importDefault(require("express"));
 const databaseConfiguration_1 = require("./config/databaseConfiguration");
 const indexRouting_1 = __importDefault(require("./routes/indexRouting"));
 const dotenv_1 = __importDefault(require("dotenv"));
+const passport_1 = __importDefault(require("passport"));
 dotenv_1.default.config();
 const app = (0, express_1.default)();
 const port = process.env.PORT || 3000;
@@ -21,6 +22,14 @@ const corsOptions = {
     allowedHeaders: ["Content-Type", "Authorization"],
     credentials: true,
 };
+// app.use(
+//     cookieSession({
+//         name:"session",
+//         keys:["cyberwolve"],
+//         maxAge: 24*60*60*100,
+//     })
+// );
+app.use(passport_1.default.initialize());
 // app.use(cors(corsOptions));
 app.use(express_1.default.json());
 app.use("/api_v1", indexRouting_1.default);

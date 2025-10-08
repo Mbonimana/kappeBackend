@@ -16,26 +16,24 @@ const nodemailer_1 = __importDefault(require("nodemailer"));
 const dotenv_1 = __importDefault(require("dotenv"));
 dotenv_1.default.config();
 const transporter = nodemailer_1.default.createTransport({
-    service: 'gmail',
+    host: "smtp.gmail.com",
+    port: 587,
+    secure: false,
+    requireTLS: true,
     auth: {
         user: process.env.EMAIL_NAME,
-        pass: process.env.EMAIL_PASSWORD,
-    },
-    tls: {
-        rejectUnauthorized: false,
+        pass: process.env.EMAIL_PASSWORD, // 16-char app password
     },
 });
-//function to send mail
 const mailsender = (to, subject, htmlContent) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const SendMailOptions = {
+        yield transporter.sendMail({
             from: process.env.EMAIL_NAME,
             to,
             subject,
             html: htmlContent,
-        };
-        yield transporter.sendMail(SendMailOptions);
-        console.log("Email Successfully");
+        });
+        console.log("Email Successfully Sent");
         return true;
     }
     catch (error) {

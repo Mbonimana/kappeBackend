@@ -13,6 +13,9 @@ const CartRoutes_1 = __importDefault(require("./routes/CartRoutes")); // functio
 const OrderRoutes_1 = __importDefault(require("./routes/OrderRoutes"));
 const ContactRoutes_1 = __importDefault(require("./routes/ContactRoutes"));
 const swagger_1 = require("./swagger");
+const auth_1 = __importDefault(require("./routes/auth"));
+require("./utils/passport");
+const passportSetup = require("./utils/passport");
 const cors = require("cors");
 dotenv_1.default.config();
 const app = (0, express_1.default)();
@@ -27,6 +30,7 @@ app.use("/api/cart", CartRoutes_1.default);
 app.use("/api/orders", OrderRoutes_1.default);
 app.use("/api/contact", ContactRoutes_1.default);
 app.use("/api-docs", swagger_1.swaggerUI.serve, swagger_1.swaggerUI.setup(swagger_1.swaggerSpec));
+app.use("/api/auth", auth_1.default);
 app.listen(PORT, () => {
     console.log(`Server running on http://localhost:${PORT}`);
 });
